@@ -8,44 +8,51 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 /**
  *
  * @author ka
  */
 @Entity
+@Table(name = "producto")
 @NamedQueries({
-    @NamedQuery(name = "Productos.findAll", query = "SELECT p FROM Productos p"),
-    @NamedQuery(name = "Productos.findById", query = "SELECT p FROM Productos p WHERE p.id = :id"),
-    @NamedQuery(name = "Productos.findByNombre", query = "SELECT p FROM Productos p WHERE p.nombre = :nombre"),
-    @NamedQuery(name = "Productos.findByPrecio", query = "SELECT p FROM Productos p WHERE p.precio = :precio"),
-    @NamedQuery(name = "Productos.findByDescripcion", query = "SELECT p FROM Productos p WHERE p.descripcion = :descripcion")})
-public class Productos implements Serializable {
+    @NamedQuery(name = "Producto.findAll", query = "SELECT p FROM Producto p"),
+    @NamedQuery(name = "Producto.findById", query = "SELECT p FROM Producto p WHERE p.id = :id"),
+    @NamedQuery(name = "Producto.findByNombre", query = "SELECT p FROM Producto p WHERE p.nombre = :nombre"),
+    @NamedQuery(name = "Producto.findByPrecio", query = "SELECT p FROM Producto p WHERE p.precio = :precio"),
+    @NamedQuery(name = "Producto.findByStock", query = "SELECT p FROM Producto p WHERE p.stock = :stock")})
+public class Producto implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
+    @Column(name = "id")
     private Integer id;
+    @Column(name = "nombre")
     private String nombre;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Column(name = "precio")
     private BigDecimal precio;
-    private String descripcion;
-    @ManyToMany(mappedBy = "productosCollection", fetch = FetchType.LAZY)
-    private Collection<Categorias> categoriasCollection;
+    @Column(name = "stock")
+    private Integer stock;
+    @OneToMany(mappedBy = "productoId", fetch = FetchType.LAZY)
+    private Collection<Venta> ventaCollection;
 
-    public Productos() {
+    public Producto() {
     }
 
-    public Productos(Integer id) {
+    public Producto(Integer id) {
         this.id = id;
     }
 
@@ -73,20 +80,20 @@ public class Productos implements Serializable {
         this.precio = precio;
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public Integer getStock() {
+        return stock;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setStock(Integer stock) {
+        this.stock = stock;
     }
 
-    public Collection<Categorias> getCategoriasCollection() {
-        return categoriasCollection;
+    public Collection<Venta> getVentaCollection() {
+        return ventaCollection;
     }
 
-    public void setCategoriasCollection(Collection<Categorias> categoriasCollection) {
-        this.categoriasCollection = categoriasCollection;
+    public void setVentaCollection(Collection<Venta> ventaCollection) {
+        this.ventaCollection = ventaCollection;
     }
 
     @Override
@@ -99,10 +106,10 @@ public class Productos implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Productos)) {
+        if (!(object instanceof Producto)) {
             return false;
         }
-        Productos other = (Productos) object;
+        Producto other = (Producto) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -111,7 +118,7 @@ public class Productos implements Serializable {
 
     @Override
     public String toString() {
-        return "com.example.appback.entity.Productos[ id=" + id + " ]";
+        return "com.example.appback.entity.Producto[ id=" + id + " ]";
     }
     
 }
